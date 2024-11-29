@@ -1,0 +1,19 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: coloring-svc
+spec:
+  type: ClusterIP
+  #type: LoadBalancer
+  selector:
+    app: coloring-svc
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8081
+      name: demo
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+      name: sidecar

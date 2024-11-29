@@ -1,0 +1,128 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coloring-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coloring
+  template:
+    metadata:
+      labels:
+        app: coloring
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: node-role.kubernetes.io/coloring
+                  operator: In
+                  values:
+                  - 'true'
+      hostAliases:
+        - ip: "127.0.0.1"
+          hostnames:
+            - "demo.local"
+      containers:
+      - name: coloring
+        image: liuzhidocker/probe-demo:2.0.0
+        securityContext:    
+          runAsUser: 1000
+          runAsGroup: 1000
+          allowPrivilegeEscalation: false
+        imagePullPolicy: IfNotPresent
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sh
+              - /opt/app/shell/preStop.sh
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: coloring-configmap
+              key: DEPLOYMENT_ENV
+        - name: NEXT_SERVER_URL
+          valueFrom:
+            configMapKeyRef:
+              name: coloring-configmap
+              key: NEXT_SERVER_URL 
+        - name: DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: coloring-secret
+              key: databaseurl
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: coloring-secret
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: coloring-secret
+              key: password
+        - name: JAVA_OPTS
+          value: "-server -Xms2048m -Xmx2048m -Xss512k"       
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: LOG_HOME
+          value: /opt/logs
+        - name: DEPLOY_VERDION
+          value: v1.0.0
+        - name: MEM_TOTAL_MB
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.memory
+        volumeMounts:
+          - mountPath: /opt/logs
+            name: host-path-logs
+        ports:
+          - containerPort: 8081
+            name: liveness-port
+      - name: sidecar
+        image: liuzhidocker/proxy-traffic:1.0.0
+        command: ["/app/proxy-traffic"]
+        args: ["--url=host.docker.internal:3306","--name=traffic", "--ports=8085,9090"]
+        ports:
+          - containerPort: 8082
+            name: http1
+          - containerPort: 9090
+            name: http2
+        volumeMounts:
+        - mountPath: /opt/logs
+          name: host-path-logs
+      initContainers:
+        - name: init
+          image: busybox:stable
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          securityContext:
+            privileged: true
+          command: ["/bin/sh"]
+          args: ["-c", "mkdir -p /opt/logs/${POD_NAMESPACE}/${POD_NAME} && chmod -R 777 /opt/logs/${POD_NAMESPACE}/${POD_NAME}"]
+          volumeMounts:
+            - mountPath: /opt/logs
+              name: host-path-logs
+      volumes:
+      - name: host-path-logs
+        hostPath:
+          path: /data/logs
+          type: DirectoryOrCreate

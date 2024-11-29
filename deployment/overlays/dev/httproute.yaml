@@ -1,0 +1,49 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  labels:
+    gateway: echo
+  name: coloring-route
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      name: envoy-gateway
+      kind: Gateway
+      namespace: default
+  hostnames:
+  - gateway.devops.com
+  rules:
+    - matches:
+      - headers:
+        - name: x-color
+          value: red
+        - name: x-chain
+          value: v1
+      backendRefs:
+      - group: ""
+        kind: Service
+        name: coloring-svc
+        port: 8080
+        weight: 1
+    - matches:
+      - headers:
+        - name: x-color
+          value: yellow
+        - name: x-chain
+          value: v1-v2-v3
+      backendRefs:
+      - group: ""
+        kind: Service
+        name: coloring-svc
+        port: 8080
+        weight: 1
+    - matches:
+      - path:
+          type: PathPrefix
+          value: "/sidecar"
+      backendRefs:
+      - group: ""
+        kind: Service
+        name: coloring-svc
+        port: 9090
+        weight: 1

@@ -1,0 +1,38 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+   <!--doc https://docs.liquibase.com/change-types/create-table.html-->
+    <changeSet author="liquibase" id="auth-1" context="dev">
+        <createTable  tableName="liquibase-demo">
+            <column name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column  name="version"  type="char(5)"/> 
+        </createTable>
+        <rollback>
+            drop table liquibase-demo
+        </rollback>
+    </changeSet>
+    <changeSet author="liquibase" id="auth-2">  
+        <addAutoIncrement tableName="liquibase-demo" columnDataType="int" columnName="id" incrementBy="1"  startWith="100" />  
+    </changeSet>
+    <changeSet author="liquibase" id="auth-3" context="dev"> 
+        <addColumn tableName="liquibase-demo" >
+            <column name="address"  position="2" type="varchar(255)"/>  
+            <column afterColumn="id"  name="name" type="varchar(50)" >  
+                <constraints nullable="false" />  
+            </column>  
+        </addColumn>  
+    </changeSet>
+    <changeSet author="liquibase" id="auth-4">  
+        <renameColumn tableName="liquibase-demo" columnDataType="varchar(100)" newColumnName="full_name" oldColumnName="name" remarks="A String"/>  
+    </changeSet>
+    
+    <changeSet author="liquibase" id="user-1" context="dev"> 
+        <addColumn tableName="t_users" >
+            <column afterColumn="id"  name="name" type="varchar(50)" >  
+                <constraints nullable="false" />  
+            </column>  
+        </addColumn>  
+    </changeSet>
+
+</databaseChangeLog>

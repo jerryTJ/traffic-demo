@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coloring-deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: coloring-demo-container
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: liveness-port
+              httpHeaders:
+              - name: Custom-Header
+                value: Awesome
+            failureThreshold: 1
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: liveness-port
+            failureThreshold: 1
+            periodSeconds: 60
+          startupProbe:
+            httpGet:
+              path: /health
+              port: liveness-port
+            failureThreshold: 30
+            periodSeconds: 10

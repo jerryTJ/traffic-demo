@@ -1,0 +1,3 @@
+rootProject.name = 'devops-demo'
+include ':liquibase-demo',
+        ':probe-demo'

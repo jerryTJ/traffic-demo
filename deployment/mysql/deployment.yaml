@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/instance: db
+    app.kubernetes.io/name: db
+  name: database
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: database
+data:
+  MYSQL_DATABASE: traffic
+  MYSQL_USER: traffic
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secret
+  namespace: database
+type: Opaque
+data:
+  MYSQL_ROOT_PASSWORD: cm9vdA== # base64 编码的 "root"
+  MYSQL_PASSWORD: bVkjUGFzc3dvNWQ= # base64 编码的 "mY#Passwo5d"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: database
+spec:
+  serviceName: mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config
+                  key: MYSQL_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config
+                  key: MYSQL_USER
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_PASSWORD
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: database
+spec:
+  type: NodePort
+  ports:
+    - port: 3306
+      targetPort: 3306
+      nodePort: 30421
+  selector:
+    app: mysql

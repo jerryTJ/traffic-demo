@@ -1,0 +1,72 @@
+plugins {
+	id 'java'
+	id 'maven-publish'
+	id 'org.liquibase.gradle' version '2.1.1'
+}
+
+group = 'com.ccb.agile.liquibase'
+
+dependencies {
+	implementation 'mysql:mysql-connector-java:5.1.47'
+	liquibaseRuntime 'org.liquibase:liquibase-core:4.8.0'
+  liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:3.0.0'
+  liquibaseRuntime 'info.picocli:picocli:4.6.1'
+  liquibaseRuntime 'mysql:mysql-connector-java:5.1.47'
+}
+
+repositories{
+	mavenCentral()
+}
+
+task liquibaseZip(type: Zip) {
+  from 'liquibase.properties'
+    into('liquibase') {
+        from 'liquibase'
+    } 
+}
+// liquibase
+ext {
+    liquibaseUrl = 'jdbc:mysql://127.0.0.1:3306/applier?useSSL=false&useUnicode=true&characterEncoding=UTF-8'
+    liquibaseOldUrl = 'jdbc:mysql://127.0.0.1:3306/applier?useSSL=false&useUnicode=true&characterEncoding=UTF-8'
+    liquibaseUsername = 'root'
+    liquibasePassword = 'Admin@123'
+}
+//在项目根目录下 执行 ./gradlew update
+// ../gradlew tag -PliquibaseCommandValue=version2
+liquibase {
+    activities {
+        // 生成全库结构 Change Log
+        genDev {
+          changeLogFile 'iquibase/changelogs/DDL/db.xml'
+          url           liquibaseUrl
+          username      liquibaseUsername
+          password      liquibasePassword
+        }
+        // 生成全库数据 Change Log
+        genDevData {
+          changeLogFile     'liquibase/changelogs/DML/dev-data.xml'
+          url               liquibaseUrl
+          username          liquibaseUsername
+          password          liquibasePassword
+          diffTypes         'data'
+        }
+        // 对比生成数据库结构变更 Change Log
+        diffDev {
+          changeLogFile     'liquibase/changelogs/DDL/dev-diff.xml'
+          url               liquibaseOldUrl
+          username          liquibaseUsername
+          password          liquibasePassword
+          referenceUrl      liquibaseUrl
+          referenceUsername liquibaseUsername
+          referencePassword liquibasePassword
+        }
+        update {
+          changeLogFile 'liquibase/changelog-auth.xml'
+          url           liquibaseUrl
+          username      liquibaseUsername
+          password      liquibasePassword
+          contexts      'dev' //只执行dev 环境下的sql配置
+        }
+    }
+    runList = 'update'
+}

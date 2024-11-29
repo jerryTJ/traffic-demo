@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coloring-deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: coloring
+          resources:
+            limits:
+              memory: 2048Mi
+            requests:
+              memory: 2048Mi

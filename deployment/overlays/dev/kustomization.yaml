@@ -1,0 +1,116 @@
+resources:
+- ../../base
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+- includeSelectors: true
+  pairs:
+    env: dev
+    
+  #- configmap_patch.yaml
+images:
+- name: liuzhidocker/probe-demo
+  newName: liuzhidocker/probe-demo
+  newTag: 2.0.2
+- name: liuzhidocker/proxy-traffic
+  newName: liuzhidocker/traffic-proxy
+  newTag: 1.0.1
+# prefix
+namePrefix: v3-
+
+configMapGenerator:
+- literals:
+  - DEPLOYMENT_ENV=sit
+  - NEXT_SERVER_URL="http://demo1.devops.com:9090"
+  name: coloring-configmap
+generatorOptions:
+  disableNameSuffixHash: true
+
+# host.docker.internal
+secretGenerator:
+- literals:
+  - username="root"
+  - password="Admin@123"
+  - databaseurl="jdbc:mysql://host.docker.internal:3306/traffic?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false"
+  name: coloring-secret
+# patches
+patches:
+# - path: healthcheck_patch.yaml
+- path: memorylimit_patch.yaml
+- path: service_patch.yaml
+- path: httproute.yaml
+- target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: coloring-deployment
+  patch: |-
+    - op: add
+      path: /spec/template/spec/hostAliases/- 
+      value:
+          ip: "127.0.0.1"
+          hostnames:
+            - "demo1.devops.com"
+    - op: add
+      path: /spec/template/spec/hostAliases/-
+      value:
+          ip: "127.0.0.1"
+          hostnames:
+            - "demo2.devops.com"
+    - op: add
+      path: /spec/template/spec/hostAliases/-
+      value:
+          ip: "127.0.0.1"
+          hostnames:
+            - "demo3.devops.com"
+    - op: add
+      path: /spec/template/spec/hostAliases/-
+      value:
+          ip: "172.18.255.1"
+          hostnames:
+            - "gateway.devops.com"
+
+## replacements
+replacements:
+- source:
+    fieldPath: metadata.name
+    kind: ConfigMap
+    name: coloring-configmap
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.0.env.0.valueFrom.configMapKeyRef.name
+    select:
+      group: apps
+      kind: Deployment
+      name: coloring-deployment
+      version: v1
+  - fieldPaths:
+    - spec.template.spec.containers.0.env.1.valueFrom.configMapKeyRef.name
+    select:
+      group: apps
+      kind: Deployment
+      name: coloring-deployment
+      version: v1
+- source:
+    fieldPath: metadata.name
+    kind: Service
+    name: coloring-svc
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.rules.0.backendRefs.0.name
+    select:
+      group: ""
+      kind: HTTPRoute
+      name: coloring-route
+      version: v1
+  - fieldPaths:
+    - spec.rules.1.backendRefs.0.name
+    select:
+      group: ""
+      kind: HTTPRoute
+      name: coloring-route
+      version: v1

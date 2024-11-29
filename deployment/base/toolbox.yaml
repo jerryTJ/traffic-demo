@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: toolbox-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: busyboxy
+  template:
+    metadata:
+      labels:
+        app: busyboxy
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: node-role.kubernetes.io/coloring
+                  operator: In
+                  values:
+                  - 'true'
+      containers:
+        - name: toolbox
+          image: busybox:stable
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          securityContext:
+            privileged: true
+          command: ["/bin/sh"]
+          args: ["-c", "sleep infinity"]
+          volumeMounts:
+            - mountPath: /opt/logs
+              name: host-path-logs
+      volumes:
+      - name: host-path-logs
+        hostPath:
+          path: /data/logs
+          type: DirectoryOrCreate

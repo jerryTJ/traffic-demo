@@ -1,0 +1,22 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+ext {
+	springBootVersion = '3.1.5'
+	liquibaseVersion = '4.8.0'
+	liquibaseModule = "liquibase-demo"
+}
+
+allprojects {
+	group = 'com.ccb.devops'
+	version = '1.1.0'
+}
+subprojects {
+  
+}
