@@ -8,6 +8,8 @@ labels:
 - includeSelectors: true
   pairs:
     env: dev
+    version: v1
+    color: red
     
   #- configmap_patch.yaml
 images:
@@ -89,6 +91,16 @@ replacements:
       version: v1
   - fieldPaths:
     - spec.template.spec.containers.0.env.1.valueFrom.configMapKeyRef.name
+    select:
+      group: apps
+      kind: Deployment
+      name: coloring-deployment
+      version: v1
+- source:
+    value: "v1"
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.0.env.2.value
     select:
       group: apps
       kind: Deployment

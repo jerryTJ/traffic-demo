@@ -17,6 +17,8 @@ spec:
       - headers:
         - name: x-color
           value: red
+        - name: version
+          value: v1
         - name: x-chain
           value: v1
       backendRefs:
@@ -29,6 +31,8 @@ spec:
       - headers:
         - name: x-color
           value: yellow
+        - name: version
+          value: v1
         - name: x-chain
           value: v1-v2-v3
       backendRefs:
@@ -37,6 +41,7 @@ spec:
         name: coloring-svc
         port: 8080
         weight: 1
+        namespace: tc
     - matches:
       - path:
           type: PathPrefix
@@ -47,3 +52,4 @@ spec:
         name: coloring-svc
         port: 9090
         weight: 1
+        namespace: default

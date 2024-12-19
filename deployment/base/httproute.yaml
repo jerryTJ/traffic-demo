@@ -17,6 +17,8 @@ spec:
           value: red
         - name: x-chain
           value: v1
+        - name: x-version
+          value: v1
       backendRefs:
       - group: ""
         kind: Service

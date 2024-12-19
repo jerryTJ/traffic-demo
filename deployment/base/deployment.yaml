@@ -51,6 +51,8 @@ spec:
             configMapKeyRef:
               name: coloring-configmap
               key: NEXT_SERVER_URL 
+        - name: DEPLOY_VERDION
+          value: v1.0.0
         - name: DB_URL
           valueFrom:
             secretKeyRef:
@@ -78,8 +80,7 @@ spec:
               fieldPath: metadata.namespace
         - name: LOG_HOME
           value: /opt/logs
-        - name: DEPLOY_VERDION
-          value: v1.0.0
+
         - name: MEM_TOTAL_MB
           valueFrom:
             resourceFieldRef:
