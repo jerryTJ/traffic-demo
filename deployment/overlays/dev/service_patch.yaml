@@ -6,6 +6,7 @@ metadata:
   labels:
     version: v1
     color: blue
+    domain: demo1.devops.com
 spec:
   type: ClusterIP
   #type: LoadBalancer

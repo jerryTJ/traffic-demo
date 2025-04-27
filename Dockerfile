@@ -1,4 +1,4 @@
-FROM openjdk:17-slim
+FROM docker.io/library/openjdk:17-slim
 LABEL maintainer="jerry"
 LABEL REPOSITORY=development-office/demo
 LABEL TAG=1.0.0

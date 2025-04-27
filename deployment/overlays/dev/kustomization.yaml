@@ -26,6 +26,8 @@ configMapGenerator:
 - literals:
   - DEPLOYMENT_ENV=sit
   - NEXT_SERVER_URL="http://demo1.devops.com:9090"
+  - DEPLOY_VERDION=v3
+  - SERVICE_NAME=coloring-svc
   name: coloring-configmap
 generatorOptions:
   disableNameSuffixHash: true
