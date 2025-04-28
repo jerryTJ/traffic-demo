@@ -3,7 +3,6 @@ package com.ccb.agile.demo.controller;
 import java.util.Map;
 import java.util.Objects;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -79,7 +78,7 @@ public class ColoringTrafficController {
     coloring.setChainId(chainId);
     coloring.setColor(color);
     coloring.setHostName(hostName);
-    coloring.setVersion("v3");
+    coloring.setVersion("v3-1");
     coloring.setNext(null);
     return ResponseEntity.ok(coloring);
   }
