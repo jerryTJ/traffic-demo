@@ -2,8 +2,8 @@ package com.ccb.agile.demo;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
@@ -22,8 +22,8 @@ public class PrometheusDemoApplication {
 	public static void digest() throws NoSuchAlgorithmException {
 		String usernameAndPassword = "super:Dvop_2981";
 		byte digest[] = MessageDigest.getInstance("SHA1").digest(usernameAndPassword.getBytes());
-		Base64 base64 = new Base64();
-		String encodeToString = base64.encodeAsString(digest);
+		// Use java.util.Base64 static methods
+		String encodeToString = Base64.getEncoder().encodeToString(digest);
 		System.out.println(encodeToString);
 	}
 
