@@ -1,6 +1,5 @@
 package com.ccb.agile.demo.controller;
 
-import org.slf4j.Logger;
 import java.util.Map;
 import java.util.Objects;
 
@@ -79,7 +78,7 @@ public class ColoringTrafficController {
     coloring.setChainId(chainId);
     coloring.setColor(color);
     coloring.setHostName(hostName);
-    coloring.setVersion("v3-2");
+    coloring.setVersion("v3-1");
     coloring.setNext(null);
     return ResponseEntity.ok(coloring);
   }
