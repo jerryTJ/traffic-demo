@@ -21,9 +21,9 @@ import reactor.core.publisher.Mono;
 public class ColoringTrafficController {
   Logger logger = LoggerFactory.getLogger(ColoringTrafficController.class);
 
-  @Value("${NEXT_SERVER_URL")
+  @Value("${NEXT_SERVER_URL:localhost")
   private String nextServerUrl;
-  @Value("${DEPLOY_VERDION}")
+  @Value("${DEPLOY_VERDION:v1}")
   private String version;
 
   private final WebClient webClient;
