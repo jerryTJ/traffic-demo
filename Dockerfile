@@ -7,6 +7,7 @@ ARG GROUP=appgroup
 ARG USER=app
 ARG GID=1000
 ARG UID=1000
+RUN echo "hello"
 RUN addgroup -g ${GID} ${GROUP} && adduser -g ${GROUP}  -u ${UID} ${USER} -D -h ${BASE_HOME} 
 WORKDIR ${BASE_HOME}
 USER ${USER}
