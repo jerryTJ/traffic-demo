@@ -1,4 +1,4 @@
-FROM docker.io/library/eclipse-temurin:21.0.7_6-jdk-alpine-3.21
+FROM docker.io/library/eclipse-temurin:17_35-jdk-centos7
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 LABEL maintainer="jerry"
 LABEL REPOSITORY=development-office/demo
@@ -9,7 +9,7 @@ ARG USER=app
 ARG GID=1000
 ARG UID=1000
 RUN echo "hello"
-RUN addgroup -g ${GID} ${GROUP} && adduser -g ${GROUP}  -u ${UID} ${USER} -D -h ${BASE_HOME} 
+RUN groupadd -g ${GID} ${GROUP} && useradd -g ${GROUP}  -u ${UID} ${USER} -d ${BASE_HOME} 
 WORKDIR ${BASE_HOME}
 USER ${USER}
 COPY shell/ ${BASE_HOME}/shell/
