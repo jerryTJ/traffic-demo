@@ -1,4 +1,5 @@
 FROM docker.io/library/eclipse-temurin:21.0.7_6-jdk-alpine-3.21
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 LABEL maintainer="jerry"
 LABEL REPOSITORY=development-office/demo
 LABEL TAG=1.0.0
