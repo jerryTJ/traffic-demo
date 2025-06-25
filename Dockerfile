@@ -1,10 +1,10 @@
-FROM docker.io/library/eclipse-temurin:17-jdk-alpine-3.21
+FROM docker.io/library/openjdk:25-ea-17-slim
 LABEL maintainer="jerry"
 LABEL REPOSITORY=development-office/demo
 LABEL TAG=1.0.0
 ARG BASE_HOME=/home/app
-ARG GROUP=appgroup
-ARG USER=appuser
+ARG GROUP=1000
+ARG USER=1000
 ARG GID=1000
 ARG UID=1000
 RUN groupadd -g ${GID} ${GROUP} && useradd -g ${GROUP}  --uid=${UID} -d ${BASE_HOME} ${USER}
