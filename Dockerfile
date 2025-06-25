@@ -1,4 +1,4 @@
-FROM docker.io/library/openjdk:25-ea-17-slim
+FROM docker.io/library/eclipse-temurin:21.0.7_6-jdk-alpine-3.21
 LABEL maintainer="jerry"
 LABEL REPOSITORY=development-office/demo
 LABEL TAG=1.0.0
