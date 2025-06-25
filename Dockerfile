@@ -1,4 +1,5 @@
 FROM docker.io/library/openjdk:17-slim
+SHELL ["/bin/bash", "-c"]
 LABEL maintainer="jerry"
 LABEL REPOSITORY=development-office/demo
 LABEL TAG=1.0.0
