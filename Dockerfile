@@ -1,4 +1,4 @@
-FROM docker.io/library/eclipse-temurin:17-jdk-alpine
+FROM docker.io/library/eclipse-temurin:17-jdk-alpine-3.21
 LABEL maintainer="jerry"
 LABEL REPOSITORY=development-office/demo
 LABEL TAG=1.0.0
