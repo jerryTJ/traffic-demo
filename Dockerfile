@@ -1,5 +1,4 @@
 FROM docker.io/library/eclipse-temurin:17_35-jdk-centos7
-SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 LABEL maintainer="jerry"
 LABEL REPOSITORY=development-office/demo
 LABEL TAG=1.0.0
@@ -8,7 +7,6 @@ ARG GROUP=appgroup
 ARG USER=app
 ARG GID=1000
 ARG UID=1000
-RUN echo "hello"
 RUN groupadd -g ${GID} ${GROUP} && useradd -g ${GROUP}  -u ${UID} ${USER} -d ${BASE_HOME} 
 WORKDIR ${BASE_HOME}
 USER ${USER}
