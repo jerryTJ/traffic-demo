@@ -78,7 +78,7 @@ public class ColoringTrafficController {
     coloring.setChainId(chainId);
     coloring.setColor(color);
     coloring.setHostName(hostName);
-    coloring.setVersion("v1");
+    coloring.setVersion("v2");
     coloring.setNext(null);
     return ResponseEntity.ok(coloring);
   }
